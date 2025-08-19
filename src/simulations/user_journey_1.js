@@ -14,6 +14,8 @@ async function main() {
     // Using find() is more robust than using array indices, as it's not affected by the order of items.
     const item1 = mockDatabase.find(item => item.id === 4); // Redmi Note 14 Pro+
     const item3 = mockDatabase.find(item => item.id === 11); // Crystal Chess Set
+    const legion = mockDatabase.find(item => item.id === 6); // Lenovo Legion 5i Gaming Notebook (stock: 8)
+    const outOfStockItem = mockDatabase.find(item => item.id === 17); // Item with 0 stock
 
     // --- Add items to the cart ---
     console.log("🛒 Adding 2x Redmi Note 14 Pro+...");
@@ -22,6 +24,16 @@ async function main() {
 
     console.log("\n🛒 Adding 1x Crystal Chess Set...");
     userCart = await cartService.addItem(userCart, item3);
+
+    // --- Test stock limit for an existing item ---
+    console.log(`\n🛒 Attempting to add ${legion.stock + 1}x ${legion.name}...`);
+    for (let i = 0; i < legion.stock + 1; i++) {
+        userCart = await cartService.addItem(userCart, legion);
+    }
+
+    // --- Test adding an item that is out of stock ---
+    console.log(`\n🛒 Attempting to add "${outOfStockItem.name}"...`);
+    userCart = await cartService.addItem(userCart, outOfStockItem);
 
     // --- Remove an item ---
     console.log("\n🛒 Removing 1x Redmi Note 14 Pro+...");

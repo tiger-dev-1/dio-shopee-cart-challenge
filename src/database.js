@@ -6,6 +6,7 @@ const mockDatabase = [
     new Item(2, "10-Pack Mash Black Boxer Briefs", "Pack of 10 seamless 100% cotton Mash boxer briefs with a custom waistband.", 249.90, 50, "Apparel & Footwear"),
     new Item(3, "Rider Style Free Black Sandals", "Sandals with adjustable straps and anatomical sole for maximum comfort.", 129.90, 40, "Apparel & Footwear"),
     new Item(13, "Nike Air Zoom Pegasus 40 Running Shoes", "Running shoes with responsive Nike Air Zoom cushioning for daily training.", 899.99, 30, "Apparel & Footwear"),
+    new Item(17, "Polo Wear Navy Blue T-Shirt", "A classic navy blue t-shirt from Polo Wear, made from 100% cotton for comfort and style.", 89.90, 0, "Apparel & Footwear"),
 
     // Electronics
     new Item(4, "Redmi Note 14 Pro+ 5G", "Flagship smartphone with a 200MP camera, 256GB storage, and a 120Hz AMOLED display.", 2899.00, 25, "Electronics"),

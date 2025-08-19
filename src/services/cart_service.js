@@ -13,15 +13,24 @@ async function addItem(userCart, item) {
     // If the item is not found after checking all elements, it returns -1.
     const itemIndex = userCart.findIndex((cartItem) => cartItem.id === item.id);
 
+    // Case 1: The item is already in the cart.
     if (itemIndex !== -1) {
-        // Item is already in the cart, increment its quantity
-        userCart[itemIndex].quantity += 1; // same as quantity = quantity + 1
-    } else {
-        // If the item is not in the cart, add a new object representing it.
-        // The spread operator (...) creates a shallow copy of the original item from the database.
-        // This is a crucial concept: we are not modifying the original database object.
-        // We then add a 'quantity' property to this new, separate object in the cart.
+        // We can only increment if the current quantity is less than the available stock.
+        if (userCart[itemIndex].quantity < item.stock) {
+            userCart[itemIndex].quantity++;
+        } else {
+            // Otherwise, inform the user that the stock limit has been reached.
+            console.log(`\n❌ Sorry! Not enough stock for "${item.name}". You already have the maximum of ${item.stock} in your cart.`);
+        }
+        return userCart;
+    }
+
+    // Case 2: The item is NOT in the cart yet.
+    // We can only add it if there is at least one unit in stock.
+    if (item.stock > 0) {
         userCart.push({ ...item, quantity: 1 });
+    } else {
+        console.log(`\n❌ Sorry! "${item.name}" is currently out of stock and cannot be added.`);
     }
 
     return userCart;
