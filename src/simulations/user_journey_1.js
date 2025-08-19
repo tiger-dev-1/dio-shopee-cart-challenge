@@ -35,9 +35,13 @@ async function main() {
     console.log(`\n🛒 Attempting to add "${outOfStockItem.name}"...`);
     userCart = await cartService.addItem(userCart, outOfStockItem);
 
-    // --- Remove an item ---
+    // --- Remove an item (decrement quantity) ---
     console.log("\n🛒 Removing 1x Redmi Note 14 Pro+...");
     userCart = await cartService.removeItem(userCart, item1);
+
+    // --- Delete an item (remove completely) ---
+    console.log(`\n🗑️ Deleting ${legion.name} from the cart...`);
+    userCart = await cartService.deleteItem(userCart, legion);
 
     // --- Display final cart details ---
     await cartService.displayCartDetails(myUser.name, userCart);

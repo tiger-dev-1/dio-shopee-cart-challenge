@@ -70,6 +70,20 @@ async function removeItem(userCart, item) {
 }
 
 /**
+ * Deletes an item completely from the cart, regardless of its quantity.
+ *
+ * @param {Array} userCart - The user's current cart.
+ * @param {Object} itemToDelete - The item to be deleted.
+ * @returns {Array} The updated cart.
+ */
+async function deleteItem(userCart, itemToDelete) {
+    // The filter method creates a new array with all elements that pass the test.
+    // Here, we keep every item whose ID does not match the ID of the item to delete.
+    const updatedCart = userCart.filter((item) => item.id !== itemToDelete.id);
+    return updatedCart;
+}
+
+/**
  * Calculates the total price of all items in the cart.
  *
  * @param {Array} userCart - The user's cart.
@@ -111,6 +125,7 @@ async function displayCartDetails(userName, userCart) {
 export {
     addItem,
     removeItem,
+    deleteItem,
     calculateTotal,
     displayCartDetails,
 };
