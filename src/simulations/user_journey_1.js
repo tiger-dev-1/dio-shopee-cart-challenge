@@ -1,6 +1,6 @@
 import * as cartService from "../services/cart_service.js";
 import * as catalogService from "../services/catalog_service.js";
-import mockDatabase from "../database.js";
+import { mockDatabase } from "../database.js";
 import User from "../entities/user_entity.js";
 
 async function main() {
@@ -8,8 +8,11 @@ async function main() {
     const myUser = new User(1, "Jane Doe", "jane.doe@example.com", "password123");
     console.log(`\n👋 Welcome, ${myUser.name}!`);
 
-    // First, display the product catalog to the user
+    // First, display the full product catalog to the user
     await catalogService.displayCatalog();
+
+    // Then, display a filtered catalog
+    await catalogService.displayCatalog(2); // Filter by category ID for "Electronics"
 
     console.log(`🛍️  Let's start shopping! 🛍️\n`);
     // The user's cart starts empty

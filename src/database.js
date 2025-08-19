@@ -27,4 +27,11 @@ const mockDatabase = [
     new Item(17, "Copag 139 Professional Playing Cards", "A professional-grade deck, plastic-coated for durability and smooth handling.", 39.90, 200, "Toys"),
 ];
 
-export default mockDatabase;
+const mockCategories = [
+    { id: 1, name: "Apparel & Footwear" },
+    { id: 2, name: "Electronics" },
+    { id: 3, name: "Home Appliances" },
+    { id: 4, name: "Toys" },
+];
+
+export { mockDatabase, mockCategories };
