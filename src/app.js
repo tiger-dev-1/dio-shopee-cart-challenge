@@ -11,23 +11,37 @@ const question = (query) => new Promise(resolve => rl.question(query, resolve));
 
 /**
  * Handles the user login flow, asking for credentials until successful.
- * @returns {Promise<User>} The authenticated user object.
+ * @returns {Promise<User|null>} The authenticated user object, or null if login fails.
  */
 async function handleLogin() {
     console.log("\n🛍️  Welcome to Shopee! 🛍️");
     console.log("Please log in to continue.");
 
-    let user = null;
-    while (!user) {
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        console.log(`\n--- Attempt ${attempt} of ${maxAttempts} ---`);
         const email = await question("Enter your email: ");
         const password = await question("Enter your password: ");
-        user = await authService.login(email, password);
+        const user = await authService.login(email, password);
+
+        if (user) {
+            return user; // Success, return the user object
+        }
     }
-    return user;
+
+    return null; // Failed all attempts
 }
 
 async function startApp() {
     const user = await handleLogin();
+
+    if (!user) {
+        console.log("\nMaximum login attempts reached. Exiting application.");
+        console.log("Come back soon! =)");
+        rl.close();
+        return;
+    }
+
     console.log(`\n👋 Welcome, ${user.name}!`);
     console.log("Application main menu will be here. Exiting for now.");
     rl.close();
