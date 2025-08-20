@@ -47,4 +47,14 @@ async function displayCategories() {
 }
 
 
-export { displayCatalog, displayCategories };
+/**
+ * Finds an item by its ID in the mock database.
+ * @param {number} itemId The ID of the item to find.
+ * @returns {Promise<Object|undefined>} The item object if found, otherwise undefined.
+ */
+async function getItemById(itemId) {
+    // Using find() is efficient as it stops once the item is found.
+    return mockDatabase.find(item => item.id === itemId);
+}
+
+export { displayCatalog, displayCategories, getItemById };
