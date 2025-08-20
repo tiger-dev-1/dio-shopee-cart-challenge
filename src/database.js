@@ -36,8 +36,9 @@ const mockCategories = [
 ];
 
 const mockUsers = [
-    new User(1, "Angela Y. Davis", "angel.davis@example.com", "password123"),
+    new User(1, "Angela Yvonne Davis", "angel_y_davis@example.com", "password123"),
     new User(2, "L Lawliet", "ryuuzaki@example.com", "password456"),
+    new User(3, "JP", "jotape@example.com", "password789")
 ];
 
 export { mockDatabase, mockCategories, mockUsers };
