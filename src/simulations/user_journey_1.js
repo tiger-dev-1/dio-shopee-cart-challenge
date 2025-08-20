@@ -1,7 +1,7 @@
 import * as cartService from "../services/cart_service.js";
 import * as catalogService from "../services/catalog_service.js";
 import * as authService from "../services/auth_service.js";
-import { mockDatabase } from "../database.js";
+import { mockDatabase, mockUsers } from "../database.js";
 
 async function main() {
     console.log("\n🛍️  Welcome to Shopee! 🛍️");
@@ -10,13 +10,16 @@ async function main() {
     let loggedInUser = null;
     const maxAttempts = 3;
 
+    // Let's try to log in as the first user from our database.
+    const userToLogin = mockUsers.find(u => u.id === 1);
+
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         console.log(`\n--- Attempt ${attempt} of ${maxAttempts} ---`);
 
         // To simulate, we'll try wrong credentials first, then the correct ones.
         // In a real app, this would come from user input.
-        const email = attempt < maxAttempts ? "wrong@email.com" : "angel.davis@example.com";
-        const password = attempt < maxAttempts ? "wrongpassword" : "password123";
+        const email = attempt < maxAttempts ? "wrong@email.com" : userToLogin.email;
+        const password = attempt < maxAttempts ? "wrongpassword" : userToLogin.password;
 
         loggedInUser = await authService.login(email, password);
 
