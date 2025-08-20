@@ -35,4 +35,16 @@ async function displayCatalog(categoryId) {
     console.log("---------------------------------------------------------------------------------\n");
 }
 
-export { displayCatalog };
+/**
+ * Displays all available categories for the user to see.
+ */
+async function displayCategories() {
+    console.log("\n--- 🗂️ Available Categories 🗂️ ---");
+    mockCategories.forEach(category => {
+        console.log(`[${category.id}] ${category.name}`);
+    });
+    console.log("----------------------------------\n");
+}
+
+
+export { displayCatalog, displayCategories };

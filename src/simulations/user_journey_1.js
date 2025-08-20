@@ -8,7 +8,10 @@ async function main() {
     const myUser = new User(1, "Jane Doe", "jane.doe@example.com", "password123");
     console.log(`\n👋 Welcome, ${myUser.name}!`);
 
-    // First, display the full product catalog to the user
+    // Show the user the available categories first
+    await catalogService.displayCategories();
+
+    // Then, display the full product catalog to the user
     await catalogService.displayCatalog();
 
     // Then, display a filtered catalog
