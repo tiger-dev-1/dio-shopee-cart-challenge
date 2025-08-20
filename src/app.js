@@ -20,7 +20,7 @@ async function handleLogin() {
 
     const maxAttempts = 3;
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        console.log(`\n--- Attempt ${attempt} of ${maxAttempts} ---`);
+        console.log(`\n--- Attempt ${attempt} of ${maxAttempts} ---\n`);
         const email = await question("Enter your email: ");
         const password = await question("Enter your password: ");
         const user = await authService.login(email, password);
@@ -41,7 +41,7 @@ async function handleLogin() {
 async function handleAddItem(currentCart) {
     // Show catalog once, initially
 
-    const itemIdStr = await question("\nEnter the Number of the item to add: ");
+    const itemIdStr = await question("\nEnter the Code of the item to add: ");
     // The 'question' function returns a string. We use parseInt to convert it into a
     // number so we can use it for lookups and comparisons. The '10' is the radix,
     // ensuring the string is parsed as a standard base-10 decimal number.
@@ -49,7 +49,7 @@ async function handleAddItem(currentCart) {
 
     // Input validation for ID
     if (isNaN(itemId)) {
-        console.log("\n❌ Invalid Choice. Please enter a number on the List.");
+        console.log("\n❌ Invalid Choice. Please enter a Code Number on the List.");
         return currentCart;
     }
 
@@ -59,10 +59,19 @@ async function handleAddItem(currentCart) {
         return currentCart;
     }
 
+    // Find the item's quantity in the cart *before* attempting to add it.
+    const originalQty = currentCart.find(i => i.id === item.id)?.quantity || 0;
+
     // This function adds only one unit of the item at a time.
     const updatedCart = await cartService.addItem(currentCart, item);
-    // Provide feedback to the user.
-    console.log(`\n✅ Added 1x "${item.name}" to your cart.`);
+
+    // Find the quantity *after* the operation.
+    const newQty = updatedCart.find(i => i.id === item.id)?.quantity || 0;
+
+    // Only show the success message if the quantity has actually increased.
+    if (newQty > originalQty) {
+        console.log(`\n✅ Added 1x "${item.name}" to your cart.`);
+    }
     return updatedCart;
 }
 
@@ -74,7 +83,7 @@ async function handleFilterByCategory() {
     await catalogService.displayCategories(); // Show available categories
     console.log("Enter '0' to clear filter and show all products.");
 
-    const categoryIdStr = await question("Enter the category Number to filter by: ");
+    const categoryIdStr = await question("Enter the Category Number to filter by: ");
 
     const categoryId = parseInt(categoryIdStr, 10);
 
@@ -130,7 +139,7 @@ async function promptAndFindItemInCart(currentCart, promptMessage) {
  */
 async function handleRemoveItem(currentCart) {
     console.log("\n--- Remove 1 unit of an Item ---");
-    const itemToRemove = await promptAndFindItemInCart(currentCart, "Enter the Number of the item to remove 1 unit from: ");
+    const itemToRemove = await promptAndFindItemInCart(currentCart, "Enter the Code of the item to remove 1 unit from: ");
 
     if (!itemToRemove) {
         return currentCart;
@@ -148,7 +157,7 @@ async function handleRemoveItem(currentCart) {
  */
 async function handleDeleteItem(currentCart) {
     console.log("\n--- Delete Item from Cart ---");
-    const itemToDelete = await promptAndFindItemInCart(currentCart, "Enter the Number of the item to delete completely: ");
+    const itemToDelete = await promptAndFindItemInCart(currentCart, "Enter the Code of the item to delete completely: ");
 
     if (!itemToDelete) {
         return currentCart;
@@ -173,10 +182,10 @@ async function handleCheckout(user, userCart) {
 
     // Display the cart one last time for confirmation
     await cartService.displayCartDetails(user.name, userCart);
-    console.log("\n--- Confirm Checkout ---");
+    console.log("\n--- Confirm Checkout? ---\n");
     console.log("1. Yes, proceed to checkout");
     console.log("2. No, continue shopping");
-    const choice = await question("Choose an option: ");
+    const choice = await question("\nChoose an option: ");
 
     // Only proceed if the user explicitly confirms with '1'.
     // Any other input will cancel the checkout process.
@@ -188,7 +197,6 @@ async function handleCheckout(user, userCart) {
     // The checkout message is now in English and more professional.
     console.log(`\n✅ The payment link has been sent to your registered email: ${user.email}.`);
     console.log("Please check your inbox to complete the payment and await further instructions.");
-    console.log("Thank you for shopping with us! Come back again! =)");
     return true; // Checkout is considered successful and will end the session.
 }
 
@@ -203,7 +211,7 @@ async function mainMenu(user) {
     const maxInvalidAttempts = 3;
 
     while (running) {
-        console.log("\n--- Main Menu ---");
+        console.log("\n--- Main Menu ---\n");
         console.log("1. View All Products");
         console.log("2. Filter by Category");
         console.log("3. Add Item to Cart"); // Add 1 unit
@@ -213,7 +221,7 @@ async function mainMenu(user) {
         console.log("7. Checkout");
         console.log("8. Log Out");
 
-        const choice = await question("Choose an option: ");
+        const choice = await question("\nChoose an option: ");
 
         // We create a "flag" that assumes the user's choice will be valid.
         // This allows us to centralize the logic for handling invalid attempts later on.

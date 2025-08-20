@@ -107,7 +107,7 @@ async function calculateTotal(userCart) {
  * @param {Array} userCart - The user's cart.
  */
 async function displayCartDetails(userName, userCart) {
-    console.log(`\n--- ${userName}'s Cart Details ---`);
+    console.log(`\n--- ${userName}'s Cart Details ---\n`);
     if (userCart.length === 0) {
         console.log("Your cart is empty.");
         return;
@@ -115,11 +115,11 @@ async function displayCartDetails(userName, userCart) {
 
     userCart.forEach(item => {
         const subtotal = item.price * item.quantity;
-        console.log(`> ${item.name} (Qty: ${item.quantity}) - Subtotal: R$${subtotal.toFixed(2)}`);
+        console.log(`Code:[${item.id}] --- Item: ${item.name}\nQty: [${item.quantity}] - Subtotal: R$ ${subtotal.toFixed(2)}\n`);
     });
 
     const total = await calculateTotal(userCart);
-    console.log(`\n--- Total: R$${total.toFixed(2)} ---`);
+    console.log(`\n--- Total: R$ ${total.toFixed(2)} ---`);
 }
 
 export {

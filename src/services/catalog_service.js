@@ -17,22 +17,22 @@ async function displayCatalog(categoryId) {
         }
     }
 
-    console.log(`\n--- ${header} ---`);
+    console.log(`\n--- ${header} ---\n`);
 
     itemsToDisplay.forEach((item, index) => {
         const stockInfo = item.stock > 0
-            ? `R$${item.price.toFixed(2)}`
+            ? `R$ ${item.price.toFixed(2)}`
             : "(Out of Stock)";
         // 1. The "ID:" text is removed for a cleaner look.
         // 2. A tab character (\t) is used to create more space and align the text.
-        console.log(`[${item.id}]\t${item.name} - ${stockInfo}`);
+        console.log(`Código: [${item.id}]\t${item.name} - ${stockInfo}`);
 
         // 3. Add a separator line between items for better readability, but not after the last one.
         if (index < itemsToDisplay.length - 1) {
-            console.log("  - - - - - - - - - - - - - - - - - - - - - - -");
+            console.log("  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
         }
     });
-    console.log("---------------------------------------------------------------------------------\n");
+    console.log("-----------------------------------------------------------------------------\n");
 }
 
 /**
