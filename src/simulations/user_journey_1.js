@@ -1,12 +1,37 @@
 import * as cartService from "../services/cart_service.js";
 import * as catalogService from "../services/catalog_service.js";
+import * as authService from "../services/auth_service.js";
 import { mockDatabase } from "../database.js";
-import User from "../entities/user_entity.js";
 
 async function main() {
-    // Create a sample user to make the simulation more personal
-    const myUser = new User(1, "Jane Doe", "jane.doe@example.com", "password123");
-    console.log(`\n👋 Welcome, ${myUser.name}!`);
+    console.log("\n🛍️  Welcome to Shopee! 🛍️");
+    console.log("Please log in to continue.");
+
+    let loggedInUser = null;
+    const maxAttempts = 3;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        console.log(`\n--- Attempt ${attempt} of ${maxAttempts} ---`);
+
+        // To simulate, we'll try wrong credentials first, then the correct ones.
+        // In a real app, this would come from user input.
+        const email = attempt < maxAttempts ? "wrong@email.com" : "angel.davis@example.com";
+        const password = attempt < maxAttempts ? "wrongpassword" : "password123";
+
+        loggedInUser = await authService.login(email, password);
+
+        if (loggedInUser) {
+            break; // Exit the loop on successful login
+        }
+    }
+
+    if (!loggedInUser) {
+        console.log("\nMaximum login attempts reached. Exiting application.");
+        console.log("Come back soon! =)");
+        return;
+    }
+
+    console.log(`\n👋 Welcome, ${loggedInUser.name}!`);
 
     // Show the user the available categories first
     await catalogService.displayCategories();
@@ -55,7 +80,7 @@ async function main() {
     userCart = await cartService.deleteItem(userCart, itemLegion);
 
     // --- Display final cart details ---
-    await cartService.displayCartDetails(myUser.name, userCart);
+    await cartService.displayCartDetails(loggedInUser.name, userCart);
 }
 
 main();

@@ -1,4 +1,5 @@
 import Item from "./entities/item_entity.js";
+import User from "./entities/user_entity.js";
 
 const mockDatabase = [
     // Apparel & Footwear
@@ -34,4 +35,9 @@ const mockCategories = [
     { id: 4, name: "Toys" },
 ];
 
-export { mockDatabase, mockCategories };
+const mockUsers = [
+    new User(1, "Angela Y. Davis", "angel.davis@example.com", "password123"),
+    new User(2, "L Lawliet", "ryuuzaki@example.com", "password456"),
+];
+
+export { mockDatabase, mockCategories, mockUsers };
