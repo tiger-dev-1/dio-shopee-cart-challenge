@@ -36,9 +36,10 @@ async function handleLogin() {
 /**
  * Handles the flow for adding an item to the cart.
  * @param {Array} currentCart The user's current cart.
+ * @param {User} user The currently logged-in user.
  * @returns {Promise<Array>} The updated cart.
  */
-async function handleAddItem(currentCart) {
+async function handleAddItem(currentCart, user) {
     // Show catalog once, initially
 
     const itemIdStr = await question("\nEnter the Code of the item to add: ");
@@ -70,7 +71,9 @@ async function handleAddItem(currentCart) {
 
     // Only show the success message if the quantity has actually increased.
     if (newQty > originalQty) {
-        console.log(`\n✅ Added 1x "${item.name}" to your cart.`);
+        console.log(`\n✅ Added 1x "${item.name}" to your cart.\n`);
+        // Display the updated cart immediately for better user experience.
+        await cartService.displayCartDetails(user.name, updatedCart);
     }
     return updatedCart;
 }
@@ -235,7 +238,7 @@ async function mainMenu(user) {
                 break;
             case '3':
                 // The cart is updated with the result of the handleAddItem function
-                userCart = await handleAddItem(userCart);
+                userCart = await handleAddItem(userCart, user);
                 break;
             case '4':
                 userCart = await handleRemoveItem(userCart);
