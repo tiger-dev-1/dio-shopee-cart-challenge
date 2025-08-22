@@ -138,9 +138,10 @@ async function promptAndFindItemInCart(currentCart, promptMessage) {
 /**
  * Handles the flow for removing one unit of an item from the cart.
  * @param {Array} currentCart The user's current cart.
+ * @param {User} user The currently logged-in user.
  * @returns {Promise<Array>} The updated cart.
  */
-async function handleRemoveItem(currentCart) {
+async function handleRemoveItem(currentCart, user) {
     console.log("\n--- Remove 1 unit of an Item ---");
     const itemToRemove = await promptAndFindItemInCart(currentCart, "Enter the Code of the item to remove 1 unit from: ");
 
@@ -149,16 +150,19 @@ async function handleRemoveItem(currentCart) {
     }
 
     const updatedCart = await cartService.removeItem(currentCart, itemToRemove);
-    console.log(`\n✅ Removed 1x "${itemToRemove.name}" from your cart.`);
+    console.log(`\n✅ Removed 1x "${itemToRemove.name}" from your cart.\n`);
+    // Display the updated cart immediately for better user experience.
+    await cartService.displayCartDetails(user.name, updatedCart);
     return updatedCart;
 }
 
 /**
  * Handles the flow for deleting an item completely from the cart.
  * @param {Array} currentCart The user's current cart.
+ * @param {User} user The currently logged-in user.
  * @returns {Promise<Array>} The updated cart.
  */
-async function handleDeleteItem(currentCart) {
+async function handleDeleteItem(currentCart, user) {
     console.log("\n--- Delete Item from Cart ---");
     const itemToDelete = await promptAndFindItemInCart(currentCart, "Enter the Code of the item to delete completely: ");
 
@@ -167,7 +171,9 @@ async function handleDeleteItem(currentCart) {
     }
 
     const updatedCart = await cartService.deleteItem(currentCart, itemToDelete);
-    console.log(`\n🗑️ Deleted all units of "${itemToDelete.name}" from your cart.`);
+    console.log(`\n🗑️ Deleted all units of "${itemToDelete.name}" from your cart.\n`);
+    // Display the updated cart immediately for better user experience.
+    await cartService.displayCartDetails(user.name, updatedCart);
     return updatedCart;
 }
 
@@ -241,10 +247,10 @@ async function mainMenu(user) {
                 userCart = await handleAddItem(userCart, user);
                 break;
             case '4':
-                userCart = await handleRemoveItem(userCart);
+                userCart = await handleRemoveItem(userCart, user);
                 break;
             case '5':
-                userCart = await handleDeleteItem(userCart);
+                userCart = await handleDeleteItem(userCart, user);
                 break;
             case '6':
                 await cartService.displayCartDetails(user.name, userCart);
