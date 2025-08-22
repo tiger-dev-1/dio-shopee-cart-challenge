@@ -25,7 +25,7 @@ async function displayCatalog(categoryId) {
             : "(Out of Stock)";
         // 1. The "ID:" text is removed for a cleaner look.
         // 2. A tab character (\t) is used to create more space and align the text.
-        console.log(`Código: [${item.id}]\t${item.name} - ${stockInfo}`);
+        console.log(`Code: [${item.id}]\t${item.name} - ${stockInfo}`);
 
         // 3. Add a separator line between items for better readability, but not after the last one.
         if (index < itemsToDisplay.length - 1) {

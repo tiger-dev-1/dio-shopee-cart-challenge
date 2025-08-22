@@ -51,7 +51,7 @@ async function removeItem(userCart, item) {
     // log a message and return the cart without any changes.
     // This prevents runtime errors from trying to access an invalid array index.
     if (itemIndex === -1) {
-        console.log("Item not found in cart.");
+        console.log("Product not found in cart.");
         return userCart;
     }
 
@@ -115,7 +115,7 @@ async function displayCartDetails(userName, userCart) {
 
     userCart.forEach(item => {
         const subtotal = item.price * item.quantity;
-        console.log(`Code:[${item.id}] --- Item: ${item.name}\nQty: [${item.quantity}] - Subtotal: R$ ${subtotal.toFixed(2)}\n`);
+        console.log(`Code:[${item.id}] --- Product: ${item.name}\nUnits: [${item.quantity}] - Subtotal: R$ ${subtotal.toFixed(2)}\n`);
     });
 
     const total = await calculateTotal(userCart);

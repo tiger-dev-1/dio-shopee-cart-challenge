@@ -42,7 +42,7 @@ async function handleLogin() {
 async function handleAddItem(currentCart, user) {
     // Show catalog once, initially
 
-    const itemIdStr = await question("\nEnter the Code of the item to add: ");
+    const itemIdStr = await question("\nEnter the Code of the Product to Add: ");
     // The 'question' function returns a string. We use parseInt to convert it into a
     // number so we can use it for lookups and comparisons. The '10' is the radix,
     // ensuring the string is parsed as a standard base-10 decimal number.
@@ -56,7 +56,7 @@ async function handleAddItem(currentCart, user) {
 
     const item = await catalogService.getItemById(itemId); // Use catalogService to find the item
     if (!item) {
-        console.log("\n❌ Item not found!");
+        console.log("\n❌ Product not found!");
         return currentCart;
     }
 
@@ -71,7 +71,7 @@ async function handleAddItem(currentCart, user) {
 
     // Only show the success message if the quantity has actually increased.
     if (newQty > originalQty) {
-        console.log(`\n✅ Added 1x "${item.name}" to your cart.\n`);
+        console.log(`\n✅ Added 1 Unit of "${item.name}" to your Cart.\n`);
         // Display the updated cart immediately for better user experience.
         await cartService.displayCartDetails(user.name, updatedCart);
     }
@@ -105,6 +105,37 @@ async function handleFilterByCategory() {
 }
 
 /**
+ * Handles the flow for incrementing one unit of an item in the cart.
+ * @param {Array} currentCart The user's current cart.
+ * @param {User} user The currently logged-in user.
+ * @returns {Promise<Array>} The updated cart.
+ */
+async function handleIncrementItem(currentCart, user) {
+    console.log("\n--- Add 1 Unit to a Product ---");
+    const itemToIncrement = await promptAndFindItemInCart(currentCart, "Enter the Code of the Product to add 1 Unit to: ");
+
+    if (!itemToIncrement) {
+        return currentCart;
+    }
+
+    // We need to know the quantity *before* the operation to check if it was successful.
+    const originalQty = itemToIncrement.quantity;
+
+    // We can reuse the addItem service, as it already handles incrementing the quantity.
+    const updatedCart = await cartService.addItem(currentCart, itemToIncrement);
+
+    const newQty = updatedCart.find(i => i.id === itemToIncrement.id)?.quantity || 0;
+
+    // Only show a success message if the quantity actually changed.
+    // The service function will print its own error message if there's no stock.
+    if (newQty > originalQty) {
+        console.log(`\n✅ Added 1 More Unit of "${itemToIncrement.name}" to your Cart.\n`);
+        await cartService.displayCartDetails(user.name, updatedCart);
+    }
+
+    return updatedCart;
+}
+/**
  * A helper function to prompt the user to select an item from their cart.
  * It handles displaying the cart and validating the user's choice.
  * @param {Array} currentCart The user's current cart.
@@ -129,7 +160,7 @@ async function promptAndFindItemInCart(currentCart, promptMessage) {
 
     const itemInCart = currentCart.find(i => i.id === itemId);
     if (!itemInCart) {
-        console.log("\n❌ Item not found in your cart.");
+        console.log("\n❌ Product not found in your Cart.");
         return null;
     }
     return itemInCart;
@@ -142,15 +173,15 @@ async function promptAndFindItemInCart(currentCart, promptMessage) {
  * @returns {Promise<Array>} The updated cart.
  */
 async function handleRemoveItem(currentCart, user) {
-    console.log("\n--- Remove 1 unit of an Item ---");
-    const itemToRemove = await promptAndFindItemInCart(currentCart, "Enter the Code of the item to remove 1 unit from: ");
+    console.log("\n--- Remove 1 Unit from a Product ---");
+    const itemToRemove = await promptAndFindItemInCart(currentCart, "Enter the Code of the Product to Remove 1 Unit from: ");
 
     if (!itemToRemove) {
         return currentCart;
     }
 
     const updatedCart = await cartService.removeItem(currentCart, itemToRemove);
-    console.log(`\n✅ Removed 1x "${itemToRemove.name}" from your cart.\n`);
+    console.log(`\n✅ Removed 1 Unit of "${itemToRemove.name}" from your Cart.\n`);
     // Display the updated cart immediately for better user experience.
     await cartService.displayCartDetails(user.name, updatedCart);
     return updatedCart;
@@ -163,15 +194,15 @@ async function handleRemoveItem(currentCart, user) {
  * @returns {Promise<Array>} The updated cart.
  */
 async function handleDeleteItem(currentCart, user) {
-    console.log("\n--- Delete Item from Cart ---");
-    const itemToDelete = await promptAndFindItemInCart(currentCart, "Enter the Code of the item to delete completely: ");
+    console.log("\n--- Delete Product from Cart ---");
+    const itemToDelete = await promptAndFindItemInCart(currentCart, "Enter the Code of the Product to Delete Completely: ");
 
     if (!itemToDelete) {
         return currentCart;
     }
 
     const updatedCart = await cartService.deleteItem(currentCart, itemToDelete);
-    console.log(`\n🗑️ Deleted all units of "${itemToDelete.name}" from your cart.\n`);
+    console.log(`\n🗑️ Deleted all Units of the Product "${itemToDelete.name}" from your Cart.\n`);
     // Display the updated cart immediately for better user experience.
     await cartService.displayCartDetails(user.name, updatedCart);
     return updatedCart;
@@ -185,7 +216,7 @@ async function handleDeleteItem(currentCart, user) {
  */
 async function handleCheckout(user, userCart) {
     if (userCart.length === 0) {
-        console.log("\n🛒 Your cart is empty. Add some items before checking out.");
+        console.log("\n🛒 Your Cart is empty. Add some Products before checking out.");
         return false; // Checkout did not complete
     }
 
@@ -223,12 +254,13 @@ async function mainMenu(user) {
         console.log("\n--- Main Menu ---\n");
         console.log("1. View All Products");
         console.log("2. Filter by Category");
-        console.log("3. Add Item to Cart"); // Add 1 unit
-        console.log("4. Remove 1 unit from Item");
-        console.log("5. Delete Item from Cart");
-        console.log("6. View Cart");
-        console.log("7. Checkout");
-        console.log("8. Log Out");
+        console.log("3. Add Product to Cart"); // From catalog
+        console.log("4. Add 1 unit to a Product"); // In cart
+        console.log("5. Remove 1 unit from a Product");
+        console.log("6. Delete Product from Cart");
+        console.log("7. View Cart");
+        console.log("8. Checkout");
+        console.log("9. Log Out");
 
         const choice = await question("\nChoose an option: ");
 
@@ -247,21 +279,24 @@ async function mainMenu(user) {
                 userCart = await handleAddItem(userCart, user);
                 break;
             case '4':
-                userCart = await handleRemoveItem(userCart, user);
+                userCart = await handleIncrementItem(userCart, user);
                 break;
             case '5':
-                userCart = await handleDeleteItem(userCart, user);
+                userCart = await handleRemoveItem(userCart, user);
                 break;
             case '6':
-                await cartService.displayCartDetails(user.name, userCart);
+                userCart = await handleDeleteItem(userCart, user);
                 break;
             case '7':
+                await cartService.displayCartDetails(user.name, userCart);
+                break;
+            case '8':
                 const checkoutCompleted = await handleCheckout(user, userCart);
                 if (checkoutCompleted) {
                     running = false; // End the session after successful checkout
                 }
                 break;
-            case '8':
+            case '9':
                 running = false;
                 break;
             default:
